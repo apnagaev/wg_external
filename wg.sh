@@ -31,7 +31,7 @@ sudo sysctl -p
 #####start wireguard
 systemctl enable wg-quick@wg0.service
 systemctl start wg-quick@wg0.service
-systemctl status wg-quick@wg0.service
+#systemctl status wg-quick@wg0.service
 
 cp /docker-compose/docker-compose.yaml /docker-compose/wg/docker-compose.yaml
 cd /docker-compose/wg

@@ -1,0 +1,48 @@
+services:
+  wg-portal:
+    image: 'wgportal/wg-portal:stable'
+    container_name: wg-portal
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    network_mode: host
+    volumes:
+      - /etc/wireguard:/etc/wireguard
+      - ./data:/app/data
+    environment:
+      - TZ=Europe/Moscow
+      - WG_DEVICES=wg0
+      - WG_DEFAULT_DEVICE=wg0
+      - WG_CONFIG_PATH=/etc/wireguard
+      - EXPIRY_REENABLE=true
+      # Core Settings
+      - ADMIN_USER=admin@wg.local
+      - ADMIN_PASS=strong_password
+#      - EXTERNAL_URL=https://wgext.wg.local
+#      - WEBSITE_TITLE=My VPN
+#      - COMPANY_NAME=vpn
+      - CONFIG_FILE=/app/data/config.yml
+      # Mail Settings
+      - MAIL_FROM=WG VPN <wg@wg.biz>
+      - EMAIL_HOST=smtp.yandex.ru
+      - EMAIL_PORT=465
+      - EMAIL_ENCRYPTION=tls
+      - EMAIL_USERNAME=wg@wg.local
+      - EMAIL_PASSWORD=mail_pasword
+      # LDAP Settings
+      - LDAP_ENABLED=false
+      - CREATE_DEFAULT_PEER=true
+      - BACKGROUND_TASK_INTERVAL=300
+  wg-prometheus:
+    image: 'mindflavor/prometheus-wireguard-exporter'
+    container_name: wg-prometheus
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    network_mode: host
+    command: -a true
+    environment:
+      PROMETHEUS_WIREGUARD_EXPORTER_SEPARATE_ALLOWED_IPS_ENABLED: true
+      PROMETHEUS_WIREGUARD_EXPORTER_EXPORT_REMOTE_IP_AND_PORT_ENABLED: true
+      EXPORT_LATEST_HANDSHAKE_DELAY: true
+      PROMETHEUS_WIREGUARD_EXPORTER_PREPEND_SUDO_ENABLED: false
